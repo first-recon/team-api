@@ -1,0 +1,12 @@
+{
+    "port": 3002,
+    "postgres": {
+        "user": "postgres",
+        "password": "postgres",
+        "database": "postgres",
+        "schema": "public",
+        "table": "teams",
+        "host": "192.168.99.100",
+        "port": 5432
+    }
+}
