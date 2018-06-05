@@ -8,5 +8,11 @@
         "table": "teams",
         "host": "recon-db",
         "port": 5432
+    },
+    "apis": {
+        "match": {
+            "host": "match-api",
+            "port": 3000
+        }
     }
 }
