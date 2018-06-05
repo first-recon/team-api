@@ -12,25 +12,28 @@ server.get('/search', (req, res) => {
     teamService.search(req.query.q)
         .then((teams) => {
             if (req.query.includeMatches) {
-                /**
-                 * for each team
-                 * retrieve matches
-                 * attach matches to team
-                 * respond
-                 */
                 Promise.all(teams.map(team => MatchService.get(team.number)))
                     .then(([matches]) => {
                         const groupedMatches = matches.reduce((grouped, m) => {
                             const teamNum = `${m.team}`;
                             if (!grouped[teamNum]) {
-                                return grouped[teamNum] = ['things'];
+                                grouped[teamNum] = [m];
+                            } else {
+                                grouped[teamNum].concat(m);
                             }
-                            return grouped[teamNum].concat('thigns3');
+                            
+                            return grouped;
                         }, {});
-                        console.log(groupedMatches);
+
+                        res.send({
+                            success: true,
+                            results: teams.map(team => {
+                                return Object.assign({}, team, { matches: groupedMatches[`${team.number}`] || [] });
+                            })
+                        });
                     });
             } else {
-                res.send(teams);
+                res.send({ success: true, results: teams });
             }
         });
 });
@@ -38,7 +41,7 @@ server.get('/search', (req, res) => {
 server.get('/', (req, res) => {
     teamService.getAll()
         .then((results) => {
-            res.send(results);
+            res.send({ success: true, results });
         })
         .catch((error) => {
             res.status(500).send({
@@ -57,10 +60,13 @@ server.get('/:number', (req, res) => {
             } else if (req.query.includeMatches) {
                 return MatchService.get(req.params.number, true)
                     .then(matches => {
-                        res.send(Object.assign({}, team, { matches: matches }));
+                        res.send({
+                            success: true,
+                            result: Object.assign({}, team, { matches: matches })
+                        });
                     });
             } else {
-                res.send(team);
+                res.send({ success: true, result: team });
             }
         })
         .catch((error) => {
