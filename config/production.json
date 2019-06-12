@@ -6,7 +6,7 @@
         "database": "postgres",
         "schema": "public",
         "table": "teams",
-        "host": "recon-db",
+        "host": "68.183.22.48",
         "port": 5432
     },
     "apis": {
